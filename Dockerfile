@@ -4,7 +4,7 @@ COPY package.json .
 #Install packages
 RUN npm install
 
-COPY ../
+COPY . .
 EXPOSE 5000
 
 CMD [ "node", "servr.js" ]
