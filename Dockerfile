@@ -1,14 +1,10 @@
-# Use a base image
-FROM node:22
-
-# Set working directory
+FROM node:22.11.0
 WORKDIR /app
-
-# Copy files
-COPY . .
-
-# Install dependencies
+COPY package.json .
+#Install packages
 RUN npm install
 
-# Set command to run the app
-CMD ["node", "/views/index.ejs"]
+COPY ../
+EXPOSE 5000
+
+CMD [ "node", "servr.js" ]
