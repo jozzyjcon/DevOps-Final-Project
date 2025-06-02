@@ -28,7 +28,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/node-app:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/devops-final-project:latest
 
       - name: Copy SSH Key
         run: |
@@ -38,7 +38,7 @@ jobs:
       - name: SSH and Deploy on EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/node-app:latest
-            docker stop node-app || true && docker rm node-app || true
-            docker run -d --name node-app -p 80:5000 ${{ secrets.DOCKERHUB_USERNAME }}/node-app:latest
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/devops-final-project:latest
+            docker stop devops-final-project || true && docker rm devops-final-project || true
+            docker run -d --name devops-final-project -p 80:5000 ${{ secrets.DOCKERHUB_USERNAME }}/devops-final-project:latest
           EOF
