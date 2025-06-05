@@ -1,9 +1,9 @@
-name: CI/CD to EC2 with Docker
+name: CI/CD to EC2 with Docker and ZAP Scan
 
 on:
   push:
     branches:
-      - main
+      - sectest
 
 jobs:
   deploy:
@@ -42,3 +42,23 @@ jobs:
             docker stop devops-final-project || true && docker rm devops-final-project || true
             docker run -d --name devops-final-project -p 80:3000 ${{ secrets.DOCKERHUB_USERNAME }}/devops-final-project:latest
           EOF
+
+      - name: Wait for App to Be Available
+        run: sleep 30  # adjust if your app takes longer
+
+      - name: Run OWASP ZAP DAST Scan
+        run: |
+          docker run --rm -v $(pwd):/zap/wrk -t owasp/zap2docker-stable zap-baseline.py \
+            -t http://${{ secrets.EC2_HOST }} \
+            -r zap_report.html \
+            -J zap_report.json \
+            -x zap_report.xml
+
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: zap-dast-report
+          path: |
+            zap_report.html
+            zap_report.json
+            zap_report.xml
